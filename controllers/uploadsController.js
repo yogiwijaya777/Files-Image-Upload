@@ -1,16 +1,42 @@
 const path = require('path');
 const { StatusCodes } = require('http-status-codes');
-const {BadRequestError} = require('../errors')
-const uploadProductImage = async (req, res) => {
-  if (!req.files) throw new BadRequestError('No file uploaded')
-  
-  const productImage = req.files.image; new BadRequestError('No file uploaded')
-  
-  if (!productImage.mimetype.startsWith('image')) throw
-  
-  const maxSize = 100000
+const { BadRequestError } = require('../errors');
+const cloudinary = require('cloudinary').v2;
 
-  if(productImage.size > maxSize) throw new BadRequestError('Please upload image smaller than 100kb')
+const uploadProductImage = async (req, res) => {
+  if (!req.files) throw new BadRequestError('No file uploaded');
+
+  const productImage = req.files.image;
+
+  if (!productImage.mimetype.startsWith('image'))
+    throw new BadRequestError('No file uploaded');
+
+  const maxSize = Infinity;
+
+  if (productImage.size > maxSize)
+    throw new BadRequestError('Please upload image smaller than 100kb');
+
+  const result = await cloudinary.uploader.upload(
+    req.files.image.tempFilePath,
+    {
+      use_filename: true,
+      folder: 'files-image-upload',
+    }
+  );
+};
+
+const uploadProductImageLocal = async (req, res) => {
+  if (!req.files) throw new BadRequestError('No file uploaded');
+
+  const productImage = req.files.image;
+
+  if (!productImage.mimetype.startsWith('image'))
+    throw new BadRequestError('No file uploaded');
+
+  const maxSize = Infinity;
+
+  if (productImage.size > maxSize)
+    throw new BadRequestError('Please upload image smaller than 100kb');
 
   const imagePath = path.join(
     __dirname,
@@ -23,4 +49,4 @@ const uploadProductImage = async (req, res) => {
     .json({ image: { src: `/uploads/${productImage.name}` } });
 };
 
-module.exports = { uploadProductImage };
+module.exports = { uploadProductImage, uploadProductImageLocal };

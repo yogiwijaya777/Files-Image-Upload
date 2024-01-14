@@ -4,4 +4,4 @@ const uploadProductImage = async (req, res) => {
   res.send('Upload product image');
 };
 
-module.exports = uploadProductImage;
+module.exports = { uploadProductImage };

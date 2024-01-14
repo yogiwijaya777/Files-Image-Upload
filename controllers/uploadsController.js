@@ -4,18 +4,6 @@ const { BadRequestError } = require('../errors');
 const cloudinary = require('cloudinary').v2;
 
 const uploadProductImage = async (req, res) => {
-  if (!req.files) throw new BadRequestError('No file uploaded');
-
-  const productImage = req.files.image;
-
-  if (!productImage.mimetype.startsWith('image'))
-    throw new BadRequestError('No file uploaded');
-
-  const maxSize = Infinity;
-
-  if (productImage.size > maxSize)
-    throw new BadRequestError('Please upload image smaller than 100kb');
-
   const result = await cloudinary.uploader.upload(
     req.files.image.tempFilePath,
     {
@@ -23,6 +11,7 @@ const uploadProductImage = async (req, res) => {
       folder: 'files-image-upload',
     }
   );
+  return res.status(StatusCodes.OK).json({ image: { src: result.secure_url } });
 };
 
 const uploadProductImageLocal = async (req, res) => {

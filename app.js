@@ -4,6 +4,13 @@ require('express-async-errors');
 const express = require('express');
 const app = express();
 const expressFileUpload = require('express-fileupload');
+const cloudinary = require('cloudinary').v2;
+cloudinary.config({
+  cloud_name: 'dmf8l6plb',
+  api_key: '946819395686368',
+  api_secret: '***************************',
+});
+
 // database
 const connectDB = require('./db/connect');
 
